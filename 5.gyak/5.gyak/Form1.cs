@@ -22,15 +22,30 @@ namespace _5.gyak
         BindingList<string> Currencies = new BindingList<string>();
         public Form1()
         {
-            Rates.Clear();
+            InitializeComponent();
+            GetCurrenicies();
+            comboBox1.DataSource = Currencies;
             RefreshData();
+
+        }
+
+        private void GetCurrenicies()
+        {
+            var mnbService = new MNBArfolyamServiceSoapClient();
+
+            var request = new GetCurrenciesRequestBody();
+            
+            var response = mnbService.GetCurrencies(request);
+
+            var result = response.GetCurrenciesResult;
         }
 
         private void RefreshData()
         {
-            InitializeComponent();
-            arfolyam();
-            Xml();
+            Rates.Clear();
+            dataGridView1.DataSource=Rates;
+            
+            Xml(arfolyam());
             chart();
         }
 
@@ -53,7 +68,7 @@ namespace _5.gyak
             chartArea.AxisY.IsStartedFromZero = false;
         }
 
-        private void Xml()
+        private void Xml(string result)
         {
             var xml = new XmlDocument();
             xml.LoadXml(result);
@@ -79,34 +94,39 @@ namespace _5.gyak
             }
         }
 
-        private static void arfolyam()
+        private string   arfolyam()
         {
             var mnbService = new MNBArfolyamServiceSoapClient();
 
             var request = new GetExchangeRatesRequestBody()
             {
-                currencyNames = "EUR",
-                startDate = "2020-01-01",
-                endDate = "2020-06-30"
+                currencyNames = (string)comboBox1.SelectedItem,
+                startDate = dateTimePicker1.Value.ToString(),
+                endDate = dateTimePicker2.Value.ToString()
             };
 
             var response = mnbService.GetExchangeRates(request);
 
             var result = response.GetExchangeRatesResult;
 
-
+            return result;
         }
 
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
             RefreshData();
-            comboBox1.DataSource = Currencies;
+            
         }
 
         private void dateTimePicker1_ValueChanged(object sender, EventArgs e)
         {
             RefreshData();
 
+        }
+
+        private void dateTimePicker2_ValueChanged(object sender, EventArgs e)
+        {
+            RefreshData();
         }
     }
 }
