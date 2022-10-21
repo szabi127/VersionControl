@@ -23,13 +23,22 @@ namespace _5.gyak
         public Form1()
         {
             InitializeComponent();
-            GetCurrenicies();
+            
             comboBox1.DataSource = Currencies;
             RefreshData();
 
         }
+        private void RefreshData()
+        {
+            Rates.Clear();
+            dataGridView1.DataSource = Rates;
+            
+            Xml(arfolyam());
+            chart();
+            nyolc(getcurrenicies());
 
-        private void GetCurrenicies()
+        }
+        private string getcurrenicies()
         {
             var mnbService = new MNBArfolyamServiceSoapClient();
 
@@ -38,15 +47,20 @@ namespace _5.gyak
             var response = mnbService.GetCurrencies(request);
 
             var result = response.GetCurrenciesResult;
+            return result;
         }
 
-        private void RefreshData()
+ 
+
+        private void nyolc(string result)
         {
-            Rates.Clear();
-            dataGridView1.DataSource=Rates;
-            
-            Xml(arfolyam());
-            chart();
+            var xml = new XmlDocument();
+            xml.LoadXml(result);
+
+            foreach (XmlElement element in xml.DocumentElement)
+            {
+
+            }
         }
 
         private void chart()
