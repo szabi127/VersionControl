@@ -18,8 +18,15 @@ namespace _5.gyak
 {
     public partial class Form1 : Form
     {
-        BindingList <RateData> Rates=new  BindingList<RateData>();
+        BindingList<RateData> Rates = new BindingList<RateData>();
+        BindingList<string> Currencies = new BindingList<string>();
         public Form1()
+        {
+            Rates.Clear();
+            RefreshData();
+        }
+
+        private void RefreshData()
         {
             InitializeComponent();
             arfolyam();
@@ -70,8 +77,9 @@ namespace _5.gyak
                 if (unit != 0)
                     rate.Value = value / unit;
             }
+        }
 
-        private void arfolyam()
+        private static void arfolyam()
         {
             var mnbService = new MNBArfolyamServiceSoapClient();
 
@@ -86,6 +94,18 @@ namespace _5.gyak
 
             var result = response.GetExchangeRatesResult;
 
+
+        }
+
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            RefreshData();
+            comboBox1.DataSource = Currencies;
+        }
+
+        private void dateTimePicker1_ValueChanged(object sender, EventArgs e)
+        {
+            RefreshData();
 
         }
     }
