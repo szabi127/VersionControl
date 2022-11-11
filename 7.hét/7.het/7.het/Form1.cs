@@ -6,6 +6,7 @@ using System.Data;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -17,6 +18,7 @@ namespace _7.het
         List<PortfolioItem> Portfolio= new List<PortfolioItem> ();
         PortfolioEntities context = new PortfolioEntities();
         List<Tick> Ticks;
+        List<decimal> nyereségekRendezve;
         public Form1()
         {
             InitializeComponent();
@@ -37,7 +39,7 @@ namespace _7.het
                 Console.WriteLine(i + " " + ny);
             }
 
-            var nyereségekRendezve = (from x in Nyereségek
+            nyereségekRendezve = (from x in Nyereségek
                                       orderby x
                                       select x)
                                         .ToList();
@@ -78,13 +80,15 @@ namespace _7.het
             if (sfd.ShowDialog()==DialogResult.OK)
             {
                 StreamWriter sw = new StreamWriter(sfd.FileName,false,Encoding.UTF8);
-                sw.WriteLine("időszak");
-                foreach (var item in Portfolio) 
+                sw.WriteLine("időszak","nyereség");
+                int szamlalo = 0;
+                foreach (var item in nyereségekRendezve) 
                 { 
-                    //sw.WriteLine($"{item.}",$"{item.Volume}");
+                    sw.WriteLine($"{szamlalo};{item}");
+                    szamlalo++;
                 }
                 sw.Close();
-
+               
             }
         }
     }
